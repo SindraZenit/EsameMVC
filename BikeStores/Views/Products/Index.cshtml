@@ -6,13 +6,25 @@
 
 <h1>@ViewBag.Header</h1>
 
-<!-- Barra di ricerca -->
+<!-- Barra di ricerca e menu a tendina per marca -->
 <form asp-action="Index" method="get">
-    <p>
-        Search by name: <input type="text" name="searchString" value="@ViewData["CurrentFilter"]" placeholder="Search products..." />
-        <input type="submit" value="Search" class="btn btn-primary" />
-    </p>
+    <div style="display: flex; align-items: center;">
+        <div>
+            <!-- Barra di ricerca per nome -->
+            Search by name:
+            <input type="text" name="searchString" value="@ViewData["CurrentFilter"]" placeholder="Search products..." />
+        </div>
+        <div style="margin-left: 20px;">
+            <!-- Menu a tendina per marca -->
+            <label>Brand:</label>
+            @Html.DropDownList("brand", (SelectList)ViewBag.Brands, "All Brands", new { @class = "form-control" })
+        </div>
+        <div style="margin-left: 10px;">
+            <input type="submit" value="Search" class="btn btn-primary" />
+        </div>
+    </div>
 </form>
+
 
 <table class="table">
     <thead>

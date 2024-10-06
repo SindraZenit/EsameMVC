@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BikeStores.Models;
+using Microsoft.IdentityModel.Tokens;
 
 namespace BikeStores.Controllers
 {
@@ -19,8 +20,12 @@ namespace BikeStores.Controllers
         }
 
         // GET: Products
-        public async Task<IActionResult> Index(string searchString)
+        public async Task<IActionResult> Index(string searchString, string? brand)
         {
+            // Recupero le marche per il menù a tendina
+            var brands = await _context.Brands.OrderBy(b => b.BrandName).ToListAsync();
+            ViewBag.Brands = new SelectList(brands, "BrandName", "BrandName", brand);
+
             // Recupero i prodotti ordinati alfabeticamente per nome del prodotto
             var products = await _context.Products
                 .Include(p => p.Brand)      // Include il riferimento alla marca
@@ -28,14 +33,21 @@ namespace BikeStores.Controllers
                 .OrderBy(p => p.ProductName) // Ordinamento alfabetico crescente per nome del prodotto
                 .ToListAsync();
 
-            // Verifica se esiste una stringa di ricerca
-            if (!String.IsNullOrEmpty(searchString))
+            // Filtro per nome parziale
+            if (!String.IsNullOrEmpty(searchString)) // Verifica se esiste una stringa di ricerca
             {
                 string patrialName = searchString.ToLower(); //Trasformo in lower sia la stringa che il nome del prodotto in modo da avere una ricerca totale
                 products = products.Where(s => s.ProductName.ToLower().Contains(patrialName)).ToList();
             }
 
             ViewData["CurrentFilter"] = searchString; // Passa il filtro alla View
+
+            // Filtro per marca
+            if (!string.IsNullOrEmpty(brand))
+            {
+                products = products.Where(p => p.Brand.BrandName == brand).ToList();
+            }
+
             ViewBag.Header = "Products List";
 
             return View(products);
