@@ -40,9 +40,9 @@
                 @Html.DisplayFor(modelItem => item.ListPrice)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.ProductId">Edit</a> |
+                @*<a asp-action="Edit" asp-route-id="@item.ProductId">Edit</a> |
+                <a asp-action="Delete" asp-route-id="@item.ProductId">Delete</a> |*@
                 <a asp-action="Details" asp-route-id="@item.ProductId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.ProductId">Delete</a> |
                 <a asp-action="ProductAvailability" asp-controller="Stocks" asp-route-id="@item.ProductId">Availability</a>
             </td>
         </tr>
