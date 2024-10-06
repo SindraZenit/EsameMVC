@@ -19,7 +19,7 @@ namespace BikeStores.Controllers
         }
 
         // GET: Products
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString)
         {
             // Recupero i prodotti ordinati alfabeticamente per nome del prodotto
             var products = await _context.Products
@@ -28,6 +28,14 @@ namespace BikeStores.Controllers
                 .OrderBy(p => p.ProductName) // Ordinamento alfabetico crescente per nome del prodotto
                 .ToListAsync();
 
+            // Verifica se esiste una stringa di ricerca
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                string patrialName = searchString.ToLower(); //Trasformo in lower sia la stringa che il nome del prodotto in modo da avere una ricerca totale
+                products = products.Where(s => s.ProductName.ToLower().Contains(patrialName)).ToList();
+            }
+
+            ViewData["CurrentFilter"] = searchString; // Passa il filtro alla View
             ViewBag.Header = "Products List";
 
             return View(products);
