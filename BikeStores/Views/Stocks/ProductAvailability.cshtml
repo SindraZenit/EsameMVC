@@ -1,0 +1,61 @@
+﻿@model IEnumerable<BikeStores.Models.Stock>
+
+@{
+    ViewData["Title"] = "ProductAvailability";
+}
+
+<h1>Product Availability</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Store Name
+            </th>
+            <th>
+                Address
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Store.Phone)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Store.Email)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Quantity)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Store.StoreName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Store.State)
+                @Html.DisplayFor(modelItem => item.Store.City)
+                @Html.DisplayFor(modelItem => item.Store.Street)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Store.Phone)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Store.Email)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Quantity)
+            </td>
+            @* <td>
+                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+            </td> *@
+        </tr>
+}
+    </tbody>
+</table>

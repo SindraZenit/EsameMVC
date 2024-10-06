@@ -1,3 +1,6 @@
+using BikeStores.Models;
+using Microsoft.EntityFrameworkCore;
+
 namespace BikeStores
 {
     public class Program
@@ -8,6 +11,11 @@ namespace BikeStores
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+
+            // Configurazione della connessione al database
+            builder.Services.AddDbContext<BikeStoresContext>(options =>
+            options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
 
             var app = builder.Build();
 
