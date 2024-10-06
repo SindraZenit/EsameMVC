@@ -41,14 +41,20 @@ namespace BikeStores.Controllers
                 return NotFound();
             }
 
+            // Recupera i dettagli del prodotto e la quantità totale
             var product = await _context.Products
                 .Include(p => p.Brand)
                 .Include(p => p.Category)
+                .Include(p => p.Stocks) // Include la relazione con i magazzini
                 .FirstOrDefaultAsync(m => m.ProductId == id);
+
             if (product == null)
             {
                 return NotFound();
             }
+
+            // Calcola la quantità totale disponibile
+            ViewBag.TotalQuantity = product.Stocks.Sum(s => s.Quantity);
 
             return View(product);
         }
