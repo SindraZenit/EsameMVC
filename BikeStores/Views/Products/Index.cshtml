@@ -11,16 +11,17 @@
     <div style="display: flex; align-items: center;">
         <div>
             <!-- Barra di ricerca per nome -->
-            Search by name:
-            <input type="text" name="searchString" value="@ViewData["CurrentFilter"]" placeholder="Search products..." />
+            <span style="margin-right: 10px; margin-top: 8px; display: inline-block;">Search by name:</span>
+            <input type="text" name="searchString" value="@ViewData["CurrentFilter"]" placeholder="Search products..."
+                   class="form-control" style="height: 38px;" />
         </div>
         <div style="margin-left: 20px;">
             <!-- Menu a tendina per marca -->
-            <label>Brand:</label>
-            @Html.DropDownList("brand", (SelectList)ViewBag.Brands, "All Brands", new { @class = "form-control" })
+            <span style="margin-right: 10px; margin-top: 8px; display: inline-block;">Filter by brand:</span>
+            @Html.DropDownList("brand", (SelectList)ViewBag.Brands, "All Brands", new { @class = "form-control", style = "height: 38px;" })
         </div>
-        <div style="margin-left: 10px;">
-            <input type="submit" value="Search" class="btn btn-primary" />
+        <div style="margin-left: 10px; margin-top: 32px;">
+            <input type="submit" value="Search" class="btn btn-primary" style="height: 38px;" />
         </div>
     </div>
 </form>
