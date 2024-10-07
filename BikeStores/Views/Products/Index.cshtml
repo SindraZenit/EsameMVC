@@ -8,6 +8,7 @@
 
 <!-- Barra di ricerca e menu a tendina per marca -->
 <form asp-action="Index" method="get">
+    <input type="hidden" name="sortOrder" value="@ViewBag.CurrentSort" /> <!-- Mantiene l'ordinamento -->
     <div style="display: flex; align-items: center;">
         <div>
             <!-- Barra di ricerca per nome -->
@@ -31,7 +32,24 @@
     <thead>
         <tr>
             <th>
-                Product Name
+                <a asp-action="Index"
+                   asp-route-sortOrder="@ViewBag.NameSortParam"
+                   asp-route-searchString="@ViewData["CurrentFilter"]"
+                   asp-route-brand="@ViewBag.Brands.SelectedValue">
+                    Product Name
+                    @if (ViewBag.CurrentSort == "name_asc")
+                    {
+                        <i class="bi bi-arrow-down"></i> <!-- Freccia giù per crescente -->
+                    }
+                    else if (ViewBag.CurrentSort == "name_desc")
+                    {
+                        <i class="bi bi-arrow-up"></i> <!-- Freccia su per decrescente -->
+                    }
+                    else
+                    {
+                        <i class="bi bi-arrow-down-up"></i> <!-- Default crescente -->
+                    }
+                </a>
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Brand)

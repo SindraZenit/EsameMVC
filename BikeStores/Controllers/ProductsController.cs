@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BikeStores.Models;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.Data.SqlClient;
 
 namespace BikeStores.Controllers
 {
@@ -20,24 +21,27 @@ namespace BikeStores.Controllers
         }
 
         // GET: Products
-        public async Task<IActionResult> Index(string searchString, string? brand)
+        public async Task<IActionResult> Index(string searchString, string? brand, string sortOrder = "name_asc") // Imposta un valore di default al sort in modo che cambi l'ordine già quando si trova nella pagina products
         {
-            // Recupero le marche per il menù a tendina
+            // Imposta i parametri di ordinamento
+            ViewBag.CurrentSort = sortOrder;
+            ViewBag.NameSortParam = sortOrder == "name_asc" ? "name_desc" : "name_asc";
+
+            // Recupero delle marche per il menù a tendina
             var brands = await _context.Brands.OrderBy(b => b.BrandName).ToListAsync();
             ViewBag.Brands = new SelectList(brands, "BrandName", "BrandName", brand);
 
-            // Recupero i prodotti ordinati alfabeticamente per nome del prodotto
-            var products = await _context.Products
+            // Inizializza la query sui prodotti
+            var productsQuery = _context.Products
                 .Include(p => p.Brand)      // Include il riferimento alla marca
                 .Include(p => p.Category)   // Include il riferimento alla categoria
-                .OrderBy(p => p.ProductName) // Ordinamento alfabetico crescente per nome del prodotto
-                .ToListAsync();
+                .AsQueryable();             // Serve per mantenere la query costruita
 
             // Filtro per nome parziale
-            if (!String.IsNullOrEmpty(searchString)) // Verifica se esiste una stringa di ricerca
+            if (!String.IsNullOrEmpty(searchString))
             {
-                string patrialName = searchString.ToLower(); //Trasformo in lower sia la stringa che il nome del prodotto in modo da avere una ricerca totale
-                products = products.Where(s => s.ProductName.ToLower().Contains(patrialName)).ToList();
+                string patrialName = searchString.ToLower();
+                productsQuery = productsQuery.Where(s => s.ProductName.ToLower().Contains(patrialName));
             }
 
             ViewData["CurrentFilter"] = searchString; // Passa il filtro alla View
@@ -45,13 +49,28 @@ namespace BikeStores.Controllers
             // Filtro per marca
             if (!string.IsNullOrEmpty(brand))
             {
-                products = products.Where(p => p.Brand.BrandName == brand).ToList();
+                productsQuery = productsQuery.Where(p => p.Brand.BrandName == brand);
             }
+
+            // Ordinamento per nome (crescente o decrescente)
+            switch (sortOrder)
+            {
+                case "name_desc":
+                    productsQuery = productsQuery.OrderByDescending(p => p.ProductName);
+                    break;
+                default:
+                    productsQuery = productsQuery.OrderBy(p => p.ProductName);
+                    break;
+            }
+
+            // Converte la query finale in lista solo alla fine
+            var products = await productsQuery.ToListAsync();
 
             ViewBag.Header = "Products List";
 
             return View(products);
         }
+
 
         // GET: Products/Details/5
         public async Task<IActionResult> Details(int? id)
